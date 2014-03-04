@@ -6,4 +6,4 @@ Create a self-signed certificate:
 
 Sign another request using the self-signed certificate as a CA:
 ---------------------------------------------------------------
-   openssl x509 -req -days 365 -in another-cert-request.csr -CA self-signed-cert.pem -CAkey private.key  -CAcreateserial -out another-cert.pem
+    openssl x509 -req -days 365 -in another-cert-request.csr -CA self-signed-cert.pem -CAkey private.key  -CAcreateserial -out another-cert.pem
