@@ -7,3 +7,11 @@ Create a self-signed certificate:
 Sign request using the self-signed certificate as a CA:
 ---------------------------------------------------------------
     openssl x509 -req -days 365 -in another-cert-request.csr -CA self-signed-cert.pem -CAkey private.key  -CAcreateserial -out another-cert.pem
+
+Add a self-signed cert to Java's keystore
+-----------------------------------------
+    
+If prompted, the default Java keystore password is "changeit"
+
+    keytool -list -keystore /etc/ssl/certs/java/cacerts
+    sudo keytool -keystore /etc/ssl/certs/java/cacerts -importcert -alias MyCert -file self-signed-cert.pem
