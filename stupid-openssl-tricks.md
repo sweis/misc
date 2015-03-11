@@ -1,18 +1,18 @@
 # Stupid OpenSSL Tricks
 
-### Piped encrypt & HMAC of a file:
+### Piped AES-256-CBC encrypt & HMAC-SHA256 of a file:
 
     openssl enc -e -aes-256-cbc -in INPUT_FILE -pass file:AES_KEY_FILE | \
     tee >(openssl dgst -sha256 -hmac ACTUAL_HMAC_KEY_VALUE -binary -out OUTPUT_HMAC) > \
     OUTPUT_CIPHERTEXT
 
-### Piped HMAC computation & decryption of a file:
+### Piped HMAC-SHA256 computation & AES-256-CBC decryption of a file:
 
     cat OUTPUT_CIPHERTEXT | \
     tee >(openssl dgst -sha256 -hmac ACTUAL_HMAC_KEY_VALUE -binary > COMPUTED_HMAC) |
     openssl enc -d -aes-256-cbc -pass file:AES_KEY_FILE -out DECRYPTED_FILE
 
-### Create a self-signed certificate:
+### Create a self-signed RSA-2048 certificate:
 
     openssl genrsa -out private.key 2048
     openssl req -new -key private.key -out self-sign-request.csr
