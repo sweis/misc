@@ -2,11 +2,15 @@
 
 ### Piped AES-256-CBC encrypt & HMAC-SHA256 of a file:
 
+'openssl enc' doesn't support -aes-256-cbc-hmac-sha1. This encrypts an input file and pipes it through tee to 'openssl digest -hmac' to compute an HMAC. Unfortunately, the dgst command can't take a key file as input and needs the actual key value to be passed in as a parameter. I think this is bash-specific syntax as well:
+
     $ openssl enc -e -aes-256-cbc -in INPUT_FILE -pass file:AES_KEY_FILE | \
         tee >(openssl dgst -sha256 -hmac ACTUAL_HMAC_KEY_VALUE -binary -out OUTPUT_HMAC) > \
         OUTPUT_CIPHERTEXT
 
 ### Piped HMAC-SHA256 computation & AES-256-CBC decryption of a file:
+
+This takes a ciphertext, pipes it through tee to compute an HMAC, then pipes through 'openssl enc' to decrypt the file. It's assumed you have the given HMAC (which is OUTPUT_HMAC from above) and can compare it to the computed value. This lets you decrypt and authenticate in one pass, rather than having to save the ciphertext locally first.
 
     $ cat OUTPUT_CIPHERTEXT | \
         tee >(openssl dgst -sha256 -hmac ACTUAL_HMAC_KEY_VALUE -binary > COMPUTED_HMAC) |
