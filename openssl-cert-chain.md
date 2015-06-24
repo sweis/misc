@@ -9,7 +9,7 @@ Fetch some example TPM certificates in DER format:
       $ curl http://www.infineon.com/dgdl/IFX+TPM+EK+Root+CA.cer?fileId=db3a304412b407950112b4166b1a207b > IFX_TPM_EK_Root_CA.der
       $ curl http://www.infineon.com/dgdl/IFX_TPM_EK_Intermediate_CA_21.crt?fileId=5546d461464245d301466c6a9acf6393 > IFX_TPM_EK_Intermediate_CA_21.der
 
-TOOD: Get the Verizon TPM root CA (Can't find source) VRSN_TPM_Root_CA.pem
+TOOD: Get the Verisign TPM root CA (Can't find source) VRSN_TPM_Root_CA.pem
 
 Convert to PEM since that's what 'c_rehash' expects:
 
