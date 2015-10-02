@@ -35,3 +35,28 @@ This takes a ciphertext, pipes it through tee to compute an HMAC, then pipes thr
 ### Get a fingerprint from a certificate
 
     openssl x509 -hash -fingerprint -noout -in certificate.pem
+
+### Generate and sign data with ECDSA P-384 SHA-256
+
+    $ openssl ecparam -genkey -name secp384r1 -noout -out private.pem
+    $ openssl ec -in private.pem -pubout -out public.pem
+    read EC key
+    writing EC key
+    $ echo "Hello world" > input.txt
+    $ echo "Some junk" > junk.txt
+    $ openssl dgst -sha256 -sign private.pem input.txt > signature.bin
+    $ openssl dgst -sha256 -verify public.pem -signature signature.bin input.txt
+    Verified OK
+    $ openssl dgst -sha256 -verify public.pem -signature signature.bin junk.txt
+    Verification Failure
+    $ dd if=/dev/zero of=badsig.bin bs=1 count=17
+    17+0 records in
+    17+0 records out
+    17 bytes (17 B) copied, 0.0288165 s, 0.6 kB/s
+    $ openssl dgst -sha256 -verify public.pem -signature badsig.bin input.txt
+    Error Verifying Data
+    140460728022840:error:0D0680A8:asn1 encoding routines:ASN1_CHECK_TLEN:wrong tag:tasn_dec.c:1342:
+    140460728022840:error:0D07803A:asn1 encoding routines:ASN1_ITEM_EX_D2I:nested asn1 error:tasn_dec.c:391:Type=ECDSA_SIG
+    $ openssl dgst -sha256 -sign private.pem junk.txt > signature2.bin
+    $ openssl dgst -sha256 -verify public.pem -signature signature2.bin input.txt
+    Verification Failure
