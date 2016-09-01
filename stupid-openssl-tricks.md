@@ -22,6 +22,12 @@ This takes a ciphertext, pipes it through tee to compute an HMAC, then pipes thr
     $ openssl req -new -key private.key -out self-sign-request.csr
     $ openssl x509 -req -days 365 -in self-sign-request.csr -signkey private.key -out self-signed-cert.pem
 
+### Create a self-signed P256 certificate:
+    
+    $ openssl ecparam -name prime256v1 -genkey -out private.key
+    $ openssl req -new -key private.key -out self-sign-request.csr
+    $ openssl x509 -req -days 365 -in self-sign-request.csr -signkey private.key -out self-signed-cert.pem
+
 ### Sign request using the self-signed certificate as a CA:
 
     $ openssl x509 -req -days 365 -in another-cert-request.csr \
