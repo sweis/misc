@@ -69,7 +69,7 @@ This takes a ciphertext, pipes it through tee to compute an HMAC, then pipes thr
 
 ### Generate a self-signed certificate with custom extension fields
 
-Create a config file like this:
+Suppose we want to create a certificate with a custom x509v3 extension with OID "1.3.6.1.4.1.9999999.1" and value "12345. This can be done in a static config file that looks like this, and is described by "man x509v3_config":
     
     distinguished_name = my_dn
     req_extensions = custom_ext
@@ -77,7 +77,7 @@ Create a config file like this:
 
     [ custom_ext ]
     # Example
-    1.3.6.1.4.1.9999999.1.1=ASN1:INT:12345
+    1.3.6.1.4.1.9999999.1=ASN1:INT:12345
 
     [ my_dn ]
     C = [Press Enter to Continue]
@@ -92,4 +92,4 @@ Then use it to create requests and sign them:
     $ openssl req -new -key private.key -out self-sign-request.csr -config myconfig.cnf -reqexts custom_ext
     $ openssl x509 -req -days 365 -in self-sign-request.csr -signkey private.key -out self-signed-cert.pem -extfile myconfig.cnf -extensions custom_ext
 
-
+More format info: "man ASN1_generate_nconf"
