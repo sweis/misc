@@ -66,3 +66,30 @@ This takes a ciphertext, pipes it through tee to compute an HMAC, then pipes thr
     $ openssl dgst -sha256 -sign private.pem junk.txt > signature2.bin
     $ openssl dgst -sha256 -verify public.pem -signature signature2.bin input.txt
     Verification Failure
+
+### Generate a self-signed certificate with custom extension fields
+
+Create a config file like this:
+    
+    distinguished_name = my_dn
+    req_extensions = custom_ext
+    prompt=no
+
+    [ custom_ext ]
+    # Example
+    1.3.6.1.4.1.9999999.1.1=ASN1:INT:12345
+
+    [ my_dn ]
+    C = [Press Enter to Continue]
+    C_default = US
+    ST = [Press Enter to Continue]
+    ST_default = CA
+    O = [Press Enter to Continue]
+    O_default  = MyOrg
+
+Then use it to create requests and sign them:
+
+    $ openssl req -new -key private.key -out self-sign-request.csr -config myconfig.cnf -reqexts custom_ext
+    $ openssl x509 -req -days 365 -in self-sign-request.csr -signkey private.key -out self-signed-cert.pem -extfile myconfig.cnf -extensions custom_ext
+
+
