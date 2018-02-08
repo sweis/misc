@@ -27,7 +27,7 @@ This takes a ciphertext, pipes it through tee to compute an HMAC, then pipes thr
     $ openssl ecparam -name prime256v1 -genkey -out private.key
     $ openssl req -new -key private.key -out self-sign-request.csr
     $ openssl x509 -req -days 365 -in self-sign-request.csr -signkey private.key -out self-signed-cert.pem
-
+    
 ### Sign request using the self-signed certificate as a CA:
 
     $ openssl x509 -req -days 365 -in another-cert-request.csr \
@@ -42,12 +42,18 @@ This takes a ciphertext, pipes it through tee to compute an HMAC, then pipes thr
 
     openssl x509 -hash -fingerprint -noout -in certificate.pem
 
-### Generate and sign data with ECDSA P-384 SHA-256
+### Extract a public key from a certificate:
+    openssl x509 -pubkey -noout -in cert.pem > pubkey.pem
+
+### Generate a raw private and public P384 key pair:
 
     $ openssl ecparam -genkey -name secp384r1 -noout -out private.pem
     $ openssl ec -in private.pem -pubout -out public.pem
     read EC key
     writing EC key
+
+### Generate and sign data with ECDSA P-384 SHA-256
+    # Assume a raw private key is in private.pem and raw public key in public.pem
     $ echo "Hello world" > input.txt
     $ echo "Some junk" > junk.txt
     $ openssl dgst -sha256 -sign private.pem input.txt > signature.bin
